@@ -1,0 +1,40 @@
+# Version
+version: "3.9"
+
+# Containers
+services:
+  # Container names
+  web:
+    # Docker file dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    links:
+      - db
+    volumes:
+      - type: bind
+        source: .
+        target: /home/app/src
+    working_dir: /home/app/src
+  db:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=admin${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # mysql -> /var/lib/mysql
+      # mongo -> /data/db
+
+# All volumes
+volumes:
+  db-data:
+    
